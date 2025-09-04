@@ -76,5 +76,9 @@ Este método é o mais recomendado, pois ele irá subir o banco de dados Postgre
     A API estará disponível em `http://localhost:8080`.
 
 
+## 🤝 Contribuição
+
+Contribuições são bem-vindas! Sinta-se à vontade para abrir issues para sugestões de funcionalidades, relatar bugs ou enviar pull requests.
+
 
             
