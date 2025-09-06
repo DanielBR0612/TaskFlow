@@ -14,7 +14,7 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "User")
+@Table(name = "users")
 public class User {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,4 +35,6 @@ public class User {
     @ManyToMany(mappedBy = "userMembers") 
     @JsonIgnore 
     private Set<Project> projects = new HashSet<>();
+    
+    
 }
