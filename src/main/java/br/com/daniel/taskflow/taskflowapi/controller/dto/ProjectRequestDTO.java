@@ -6,7 +6,7 @@ import java.util.Set;
 import lombok.Data;
 
 @Data
-public class ProjectCreateDTO {
+public class ProjectRequestDTO {
 	@NotBlank(message = "O nome do projeto é obrigatório")
     private String name;
 

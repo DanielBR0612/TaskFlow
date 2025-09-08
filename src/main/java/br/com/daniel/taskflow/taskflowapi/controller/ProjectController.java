@@ -5,8 +5,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import br.com.daniel.taskflow.taskflowapi.model.Project;
-import br.com.daniel.taskflow.taskflowapi.repository.ProjectRepository;
-import br.com.daniel.taskflow.taskflowapi.controller.dto.ProjectCreateDTO;
+import br.com.daniel.taskflow.taskflowapi.controller.dto.ProjectRequestDTO;
+import br.com.daniel.taskflow.taskflowapi.controller.dto.ProjectResponseDTO;
 import br.com.daniel.taskflow.taskflowapi.service.ProjectService;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -16,20 +16,18 @@ import java.util.List;
 public class ProjectController {
 	
 	@Autowired
-	private ProjectRepository projectRepository;
-	
-	@Autowired
 	private ProjectService projectService;
 	
     @PostMapping
-    public ResponseEntity<Project> createProject(@Valid @RequestBody ProjectCreateDTO projectDTO) {
+    public ResponseEntity<Project> createProject(@Valid @RequestBody ProjectRequestDTO projectDTO) {
         Project createdProject = projectService.create(projectDTO);
         
         return new ResponseEntity<>(createdProject, HttpStatus.CREATED);
     }
 	
 	@GetMapping
-	public List<Project> getAllUsers() {
-		return projectRepository.findAll();
+	public ResponseEntity<List<ProjectResponseDTO>> getAllProjects() {
+		List<ProjectResponseDTO> projects = projectService.findAll();
+		return ResponseEntity.ok(projects);
 	}
 }

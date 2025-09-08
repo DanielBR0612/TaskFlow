@@ -1,6 +1,6 @@
 package br.com.daniel.taskflow.taskflowapi.service;
 
-import br.com.daniel.taskflow.taskflowapi.controller.dto.UserCreateDTO;
+import br.com.daniel.taskflow.taskflowapi.controller.dto.UserRequestDTO;
 import br.com.daniel.taskflow.taskflowapi.controller.dto.UserResponseDTO;
 import br.com.daniel.taskflow.taskflowapi.model.User;
 import br.com.daniel.taskflow.taskflowapi.repository.UserRepository;
@@ -17,13 +17,13 @@ public class UserService {
 	private UserRepository userRepository;
 	
 	@Transactional
-	public UserResponseDTO create(UserCreateDTO userDTO) {
+	public UserResponseDTO create(UserRequestDTO userDTO) {
 		
 		User newUser = new User();
 		
-		newUser.getUserName();
-		newUser.getPassword();
-		newUser.getMail();
+		newUser.setUserName(userDTO.getUserName());
+		newUser.setPassword(userDTO.getPassword());
+		newUser.setMail(userDTO.getMail());
 		
 		User savedUser = userRepository.save(newUser);
 		

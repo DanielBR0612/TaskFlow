@@ -29,12 +29,12 @@ public class Task {
 	@NotBlank(message = "O título é obrigatório")
 	private String title;
 	private String description;
-	private Boolean completd;
+	private Boolean completed;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id")     
 	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"}) 
-	private User userOwner;
+	private User creator;
 	 
 	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@JoinTable(
