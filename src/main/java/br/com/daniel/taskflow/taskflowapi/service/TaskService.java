@@ -31,30 +31,15 @@ public class TaskService {
 	private TaskRepository taskRepository;
 	
 	@Transactional
-	public Task create(TaskRequestDTO taskDTO) {
-		
-		User creator = userRepository.findById(taskDTO.getCreatorId())
-	            .orElseThrow(() -> new RuntimeException("Usuário criador não encontrado!"));
-		
-		Set<User> assignedMembers = new HashSet<>();
-		if (taskDTO.getAssignedUsersIds() != null && !taskDTO.getAssignedUsersIds().isEmpty()) {
-            assignedMembers = new HashSet<>(userRepository.findAllById(taskDTO.getAssignedUsersIds()));
-        }
-		
-		Project project = projectRepository.findById(taskDTO.getProjectId())
-                .orElseThrow(() -> new RuntimeException("Projeto não encontrado!"));
-
+	public TaskResponseDTO create(TaskRequestDTO taskDTO) {
 		
 		Task newTask = new Task();
 		
-		newTask.setTitle(taskDTO.getTitle());
-		newTask.setDescription(taskDTO.getDescription());
-		newTask.setCompleted(false);
-		newTask.setCreator(creator);
-		newTask.setAssignedUsers(assignedMembers);
-		newTask.setProject(project);
+		populateTaskFromDTO(newTask, taskDTO);
 		
-		return taskRepository.save(newTask);
+		Task savedTask = taskRepository.save(newTask);
+		
+		return TaskResponseDTO.fromEntity(savedTask);
 	}
 	
 	@Transactional(readOnly = true)
@@ -72,5 +57,42 @@ public class TaskService {
 	                return new TaskResponseDTO(task.getId(), task.getTitle(), task.getDescription(), task.getCompleted(), creatorDTO, assignedUsersDTOs, projectDTO); 
 	            })
 	            .collect(Collectors.toList());
+	}
+	
+	public void populateTaskFromDTO(Task task, TaskRequestDTO taskDTO) {
+		User creator = userRepository.findById(taskDTO.getCreatorId())
+	            .orElseThrow(() -> new RuntimeException("Usuário criador não encontrado!"));
+		
+		Set<User> assignedMembers = new HashSet<>();
+		if (taskDTO.getAssignedUsersIds() != null && !taskDTO.getAssignedUsersIds().isEmpty()) {
+            assignedMembers = new HashSet<>(userRepository.findAllById(taskDTO.getAssignedUsersIds()));
+        }
+		
+		Project project = projectRepository.findById(taskDTO.getProjectId())
+                .orElseThrow(() -> new RuntimeException("Projeto não encontrado!"));
+		
+		if (taskDTO.getCompleted() != null) {
+	        task.setCompleted(taskDTO.getCompleted());
+	    } else if (task.getId() == null) { 
+	        task.setCompleted(false);
+	    }
+
+		task.setTitle(taskDTO.getTitle());
+		task.setDescription(taskDTO.getDescription());
+		task.setCreator(creator);
+		task.setAssignedUsers(assignedMembers);
+		task.setProject(project);
+	}
+	
+	@Transactional
+	public TaskResponseDTO update(Long taskId, TaskRequestDTO taskDTO) {
+		Task updatedTask = taskRepository.findById(taskId)
+				.orElseThrow(() -> new RuntimeException("A task não foi encontrada"));
+		
+		populateTaskFromDTO(updatedTask, taskDTO);
+		
+		Task savedTask = taskRepository.save(updatedTask);
+		
+		return TaskResponseDTO.fromEntity(savedTask);
 	}
 }

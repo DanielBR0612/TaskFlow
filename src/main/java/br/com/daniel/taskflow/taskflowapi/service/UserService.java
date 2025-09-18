@@ -36,4 +36,18 @@ public class UserService {
             .map(user -> new UserResponseDTO(user.getId(), user.getUserName(), user.getMail()))
             .collect(Collectors.toList());
     }
+	
+	@Transactional
+	public UserResponseDTO update(Long userId, UserRequestDTO userDTO) {
+		User updatedUser = userRepository.findById(userId)
+				.orElseThrow(() -> new RuntimeException("Usuario não encontrado"));
+		
+		updatedUser.setUserName(userDTO.getUserName());
+		updatedUser.setPassword(userDTO.getPassword());
+		updatedUser.setMail(userDTO.getMail());
+		
+		User savedUser = userRepository.save(updatedUser);
+		
+		return UserResponseDTO.fromEntity(savedUser);
+	}
 }

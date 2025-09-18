@@ -25,22 +25,14 @@ public class ProjectService {
     private UserRepository userRepository;
 
     @Transactional
-    public Project create(ProjectRequestDTO projectDTO) {
-        User owner = userRepository.findById(projectDTO.getOwnerId())
-                .orElseThrow(() -> new RuntimeException("Usuário dono não encontrado!"));
-
-        Set<User> members = new HashSet<>();
-        if (projectDTO.getMemberIds() != null && !projectDTO.getMemberIds().isEmpty()) {
-            members = new HashSet<>(userRepository.findAllById(projectDTO.getMemberIds()));
-        }
-
+    public ProjectResponseDTO create(ProjectRequestDTO projectDTO) {
         Project newProject = new Project();
         
-        newProject.setName(projectDTO.getName());
-        newProject.setUserOwner(owner);
-        newProject.setUserMembers(members);
+        populateProjectFromDTO(newProject, projectDTO);
+        
+        Project savedProject =  projectRepository.save(newProject);
 
-        return projectRepository.save(newProject);
+        return ProjectResponseDTO.fromEntity(savedProject);
     }
     
     @Transactional(readOnly = true)
@@ -56,6 +48,34 @@ public class ProjectService {
                     return new ProjectResponseDTO(project.getId(), project.getName(), ownerDTO, memberDTOs);
                 })
                 .collect(Collectors.toList());
+    }
+    
+    @Transactional
+    public ProjectResponseDTO update(Long projectId, ProjectRequestDTO projectDTO) {
+    	Project updatedProject = projectRepository.findById(projectId)
+    			.orElseThrow(() -> new RuntimeException("O projeto não foi encontrado"));
+    	
+    	populateProjectFromDTO(updatedProject, projectDTO);
+    	
+    	Project savedProject = projectRepository.save(updatedProject);
+    	
+    	return ProjectResponseDTO.fromEntity(savedProject);
+    }
+    
+    private void populateProjectFromDTO(Project project, ProjectRequestDTO dto) {
+
+        User owner = userRepository.findById(dto.getOwnerId())
+                .orElseThrow(() -> new RuntimeException("Usuário dono não encontrado!"));
+        
+        Set<User> members = new HashSet<>();
+        if (dto.getMemberIds() != null && !dto.getMemberIds().isEmpty()) {
+            members = new HashSet<>(userRepository.findAllById(dto.getMemberIds()));
+        }
+
+
+        project.setName(dto.getName());
+        project.setUserOwner(owner);
+        project.setUserMembers(members);
     }
 
 }

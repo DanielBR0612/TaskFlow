@@ -17,6 +17,8 @@ public class TaskRequestDTO {
 	@NotNull
 	private Long creatorId;
 	
+	private Boolean completed;
+	
 	@NotNull
 	private Set<Long> assignedUsersIds;
 	

@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import br.com.daniel.taskflow.taskflowapi.model.Project;
 import br.com.daniel.taskflow.taskflowapi.controller.dto.ProjectRequestDTO;
 import br.com.daniel.taskflow.taskflowapi.controller.dto.ProjectResponseDTO;
 import br.com.daniel.taskflow.taskflowapi.service.ProjectService;
@@ -19,8 +18,8 @@ public class ProjectController {
 	private ProjectService projectService;
 	
     @PostMapping
-    public ResponseEntity<Project> createProject(@Valid @RequestBody ProjectRequestDTO projectDTO) {
-        Project createdProject = projectService.create(projectDTO);
+    public ResponseEntity<ProjectResponseDTO> createProject(@Valid @RequestBody ProjectRequestDTO projectDTO) {
+        ProjectResponseDTO createdProject = projectService.create(projectDTO);
         
         return new ResponseEntity<>(createdProject, HttpStatus.CREATED);
     }
