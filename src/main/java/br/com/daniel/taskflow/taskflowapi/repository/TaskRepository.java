@@ -10,4 +10,5 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
 	    List<Task> findAllWithDetails();
 	
 	boolean existsByCreatorId(Long creatorId);
+	boolean existsByProjectId(Long projectID);
 }
