@@ -4,8 +4,10 @@ import br.com.daniel.taskflow.taskflowapi.controller.dto.ProjectRequestDTO;
 import br.com.daniel.taskflow.taskflowapi.controller.dto.ProjectResponseDTO;
 import br.com.daniel.taskflow.taskflowapi.controller.dto.UserResponseDTO;
 import br.com.daniel.taskflow.taskflowapi.model.Project;
+import br.com.daniel.taskflow.taskflowapi.model.Task;
 import br.com.daniel.taskflow.taskflowapi.model.User;
 import br.com.daniel.taskflow.taskflowapi.repository.ProjectRepository;
+import br.com.daniel.taskflow.taskflowapi.repository.TaskRepository;
 import br.com.daniel.taskflow.taskflowapi.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,9 @@ public class ProjectService {
 
     @Autowired
     private UserRepository userRepository;
+    
+    @Autowired
+    private TaskRepository taskRepository;
 
     @Transactional
     public ProjectResponseDTO create(ProjectRequestDTO projectDTO) {
@@ -72,10 +77,25 @@ public class ProjectService {
             members = new HashSet<>(userRepository.findAllById(dto.getMemberIds()));
         }
 
-
         project.setName(dto.getName());
         project.setUserOwner(owner);
         project.setUserMembers(members);
     }
+    
+	@Transactional
+	public void delete(Long projectID) {
+		Project project = projectRepository.findById(projectID) 
+	            .orElseThrow(() -> new RuntimeException("Tarefa não encontrada com o id: " + projectID));
+
+	    for (User user : new HashSet<>(project.getUserMembers())) {
+	        user.getProjects().remove(project); 
+	    }
+	    
+	    for (Task task : new HashSet<>(project.getTasks())) {
+	    	taskRepository.delete(task);
+	    }
+	    
+	    projectRepository.deleteById(projectID);
+	}
 
 }

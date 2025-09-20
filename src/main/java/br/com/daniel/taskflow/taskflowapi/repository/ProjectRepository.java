@@ -9,4 +9,6 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
 
 	@Query("SELECT DISTINCT p FROM Project p LEFT JOIN FETCH p.userOwner LEFT JOIN FETCH p.userMembers")
     	List<Project> findAllWithDetails();
+	
+	boolean existsByUserOwnerId(Long userOwnerId);
 }

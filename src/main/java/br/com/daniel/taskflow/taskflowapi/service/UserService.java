@@ -3,6 +3,8 @@ package br.com.daniel.taskflow.taskflowapi.service;
 import br.com.daniel.taskflow.taskflowapi.controller.dto.UserRequestDTO;
 import br.com.daniel.taskflow.taskflowapi.controller.dto.UserResponseDTO;
 import br.com.daniel.taskflow.taskflowapi.model.User;
+import br.com.daniel.taskflow.taskflowapi.repository.ProjectRepository;
+import br.com.daniel.taskflow.taskflowapi.repository.TaskRepository;
 import br.com.daniel.taskflow.taskflowapi.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,12 @@ public class UserService {
 	
 	@Autowired
 	private UserRepository userRepository;
+	
+	@Autowired
+	private TaskRepository taskRepository;
+	
+	@Autowired
+	private ProjectRepository projectRepository;
 	
 	@Transactional
 	public UserResponseDTO create(UserRequestDTO userDTO) {
@@ -49,5 +57,18 @@ public class UserService {
 		User savedUser = userRepository.save(updatedUser);
 		
 		return UserResponseDTO.fromEntity(savedUser);
+	}
+	
+	@Transactional
+	public void delete(Long id) {
+	    if (!userRepository.existsById(id)) {
+	        throw new RuntimeException("Usuário não encontrado com o id: " + id);
+	    }
+
+		if (projectRepository.existsByUserOwnerId(id) || taskRepository.existsByCreatorId(id)) {
+	        throw new IllegalStateException("Não é possível deletar o usuário pois ele é dono de projetos ou tarefas existentes.");
+	    }
+	    
+	    userRepository.deleteById(id);
 	}
 }

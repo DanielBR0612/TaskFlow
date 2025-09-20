@@ -22,7 +22,7 @@ public class UserController {
 	}
 	
 	@PostMapping
-	public ResponseEntity<UserResponseDTO> CreateUser(@Valid @RequestBody UserRequestDTO userDTO)  {
+	public ResponseEntity<UserResponseDTO> createUser(@Valid @RequestBody UserRequestDTO userDTO)  {
 		UserResponseDTO createdUser = userService.create(userDTO);
 		
 		return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
@@ -33,5 +33,18 @@ public class UserController {
 		List<UserResponseDTO> users = userService.findAll();
 		
         return ResponseEntity.ok(users);
+	}
+	
+	@PutMapping("/{userID}")
+	public ResponseEntity<UserResponseDTO> updateUser(@PathVariable Long userID, @Valid @RequestBody UserRequestDTO userDTO) {
+		UserResponseDTO updatedUser = userService.update(userID, userDTO);
+		
+		return new ResponseEntity<>(updatedUser, HttpStatus.OK);
+	}
+	
+	@DeleteMapping("/{userID}")
+	public ResponseEntity<Void> deleteUser(@PathVariable Long userID) {
+	    userService.delete(userID);
+	    return ResponseEntity.noContent().build();
 	}
 }

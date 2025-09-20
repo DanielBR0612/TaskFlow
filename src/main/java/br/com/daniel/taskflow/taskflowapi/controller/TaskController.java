@@ -1,7 +1,5 @@
 package br.com.daniel.taskflow.taskflowapi.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,9 +17,8 @@ public class TaskController {
 	@Autowired
 	private TaskService taskService;
 	
-	
 	@PostMapping
-	public ResponseEntity<TaskResponseDTO> CreateTask(@Valid @RequestBody TaskRequestDTO taskRequestDTO) {
+	public ResponseEntity<TaskResponseDTO> createTask(@Valid @RequestBody TaskRequestDTO taskRequestDTO) {
 		TaskResponseDTO createdTask = taskService.create(taskRequestDTO);
 		
 		return new ResponseEntity<>(createdTask, HttpStatus.CREATED);
@@ -32,5 +29,18 @@ public class TaskController {
 		List<TaskResponseDTO> tasks = taskService.findAll();
 		
 		return ResponseEntity.ok(tasks);
+	}
+	
+	@PutMapping("/{taskID}")
+	public ResponseEntity<TaskResponseDTO> updateTask(@PathVariable Long taskID, @Valid @RequestBody TaskRequestDTO taskRequestDTO) {
+		TaskResponseDTO updatedTask = taskService.update(taskID, taskRequestDTO);
+		
+		return new ResponseEntity<>(updatedTask, HttpStatus.OK);
+	}
+	
+	@DeleteMapping("/{taskID}")
+	public ResponseEntity<Void> deleteUser(@PathVariable Long taskID) {
+	    taskService.delete(taskID);
+	    return ResponseEntity.noContent().build();
 	}
 }

@@ -29,4 +29,17 @@ public class ProjectController {
 		List<ProjectResponseDTO> projects = projectService.findAll();
 		return ResponseEntity.ok(projects);
 	}
+	
+	@PutMapping("/{projectID}")
+	public ResponseEntity<ProjectResponseDTO> updateProject(@PathVariable Long projectID, @Valid @RequestBody ProjectRequestDTO projectDTO) {
+		ProjectResponseDTO updatedProject = projectService.update(projectID, projectDTO);
+		
+		return new ResponseEntity<>(updatedProject, HttpStatus.OK);
+	}
+	
+	@DeleteMapping("/{projectID}")
+	public ResponseEntity<Void> deleteUser(@PathVariable Long projectID) {
+	    projectService.delete(projectID);
+	    return ResponseEntity.noContent().build();
+	}
 }

@@ -95,4 +95,21 @@ public class TaskService {
 		
 		return TaskResponseDTO.fromEntity(savedTask);
 	}
+	
+	@Transactional
+	public void delete(Long taskID) {
+		Task task = taskRepository.findById(taskID) 
+	            .orElseThrow(() -> new RuntimeException("Tarefa não encontrada com o id: " + taskID));
+	    
+	    Project project = task.getProject();
+	    if (project != null) {
+	        project.getTasks().remove(task);
+	    }
+
+	    for (User user : new HashSet<>(task.getAssignedUsers())) {
+	        user.getTasks().remove(task); 
+	    }
+	    
+	    taskRepository.deleteById(taskID);
+	}
 }

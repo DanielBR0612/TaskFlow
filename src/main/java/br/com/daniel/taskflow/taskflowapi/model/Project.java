@@ -11,13 +11,24 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import java.util.HashSet;
 import java.util.Set;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(of = "id") 
 @Entity
 @Table(name = "projects")
 public class Project {
@@ -32,6 +43,10 @@ public class Project {
 	@JoinColumn(name = "user_id")     
 	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"}) 
 	private User userOwner;
+	
+	@OneToMany(mappedBy = "project")
+	@JsonIgnore 
+	private Set<Task> tasks = new HashSet<>();
 	
 	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@JoinTable(

@@ -8,4 +8,6 @@ import java.util.List;
 public interface TaskRepository extends JpaRepository<Task, Long> {
 	@Query("SELECT DISTINCT t FROM Task t " + "LEFT JOIN FETCH t.creator " + "LEFT JOIN FETCH t.project " + "LEFT JOIN FETCH t.assignedUsers")
 	    List<Task> findAllWithDetails();
+	
+	boolean existsByCreatorId(Long creatorId);
 }
